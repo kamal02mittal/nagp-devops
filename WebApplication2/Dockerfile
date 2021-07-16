@@ -1,20 +1,24 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-WORKDIR /src
-COPY *.sln .
-COPY WebApplication2/*.csproj ./WebApplication2
-#COPY ["./TestProject2/*.csproj", "./TestProject2/"]
+
+
+
+
+FROM mcr.microsoft.com/dotnet/sdk:5.0-windowsservercore-ltsc2019 AS build
+WORKDIR /source
+
+# copy csproj and restore as distinct layers
+COPY ./*.sln ./
+COPY *.csproj .
 RUN dotnet restore
-COPY . .
-WORKDIR "/src/WebApplication2"
-RUN dotnet build "WebApplication2.csproj" -c Release -o /app/build
 
-FROM build AS publish
-RUN dotnet publish "WebApplication2.csproj" -c Release -o /app/publish
+# copy everything else and build app
+COPY . WebApplication2
+WORKDIR /source/WebApplication2
+RUN dotnet publish -c release -o /app -r win-x64 --self-contained false --no-restore
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+# final stage/image
+FROM mcr.microsoft.com/dotnet/framework/aspnet:4.8-windowsservercore-ltsc2019 AS runtime
 WORKDIR /app
+COPY --from=build /app ./
+ENTRYPOINT ["WebApplication2"]
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApplication2.dll"]
+
