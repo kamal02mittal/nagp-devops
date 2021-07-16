@@ -4,7 +4,8 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-COPY ["*.csproj", "./"]
+COPY *.csproj ./
+COPY WebApplication2/*.csproj", "WebApplication2/
 COPY ["./TestProject2/*.csproj", "./TestProject2/"]
 RUN dotnet restore
 COPY . .
