@@ -4,11 +4,11 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-COPY ["WebApplication2/WebApplication2.csproj", "WebApplication2/"]
-COPY ["TestProject2/TestProject2.csproj", "TestProject2/"]
-RUN dotnet restore "WebApplication2/WebApplication2.csproj"
+COPY ["*.csproj", "./"]
+COPY ["./TestProject2/*.csproj", "./TestProject2/"]
+RUN dotnet restore
 COPY . .
-WORKDIR "/src/WebApplication2"
+WORKDIR "/src/"
 RUN dotnet build "WebApplication2.csproj" -c Release -o /app/build
 
 FROM build AS publish
