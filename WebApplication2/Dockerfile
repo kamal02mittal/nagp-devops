@@ -4,7 +4,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-RUN pwd
+RUN dir
 COPY ["*.csproj", "./"]
 COPY ["./TestProject2/*.csproj", "./TestProject2/"]
 RUN dotnet restore
